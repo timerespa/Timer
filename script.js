@@ -1,67 +1,31 @@
-const respTimes = [
-    "10:01:05", "11:03:35", "12:06:05", "13:08:35",
-    "14:11:05", "15:13:35", "16:16:05", "17:18:35",
-    "18:21:05", "19:23:35", "20:26:05", "21:28:35", "22:31:05"
-];
+// Konfiguracja czasu między respami w sekundach (1h 2 min 30 sek)
+const respInterval = 3750;
 
-function getNextResp() {
+// Funkcja do obliczania czasu do następnego respu
+function calculateNextResp() {
     const now = new Date();
-    for (let i = 0; i < respTimes.length; i++) {
-        const [h, m, s] = respTimes[i].split(":").map(Number);
-        const respTime = new Date();
-        respTime.setHours(h, m, s, 0);
+    const lastResp = new Date(Math.floor(now.getTime() / (respInterval * 1000)) * (respInterval * 1000));
+    const nextResp = new Date(lastResp.getTime() + respInterval * 1000);
 
-        if (respTime > now) {
-            return { nextResp: respTimes[i], lastResp: respTimes[i - 1] || "Brak" };
-        }
-    }
-    return { nextResp: respTimes[0], lastResp: respTimes[respTimes.length - 1] };
+    return { now, nextResp };
 }
 
-function updateCountdown() {
-    const { nextResp, lastResp } = getNextResp();
-    document.getElementById("nextResp").textContent = nextResp;
-    document.getElementById("lastResp").textContent = lastResp;
+// Aktualizacja timera
+function updateTimer() {
+    const { now, nextResp } = calculateNextResp();
+    const timeDiff = Math.floor((nextResp - now) / 1000);
 
-    const [h, m, s] = nextResp.split(":").map(Number);
-    const respTime = new Date();
-    respTime.setHours(h, m, s, 0);
+    const hours = Math.floor(timeDiff / 3600);
+    const minutes = Math.floor((timeDiff % 3600) / 60);
+    const seconds = timeDiff % 60;
 
-    const now = new Date();
-    const timeDiff = (respTime - now) / 1000;
+    document.getElementById("countdown").textContent =
+        `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 
-    if (timeDiff > 0) {
-        const minutes = Math.floor(timeDiff / 60);
-        const seconds = Math.floor(timeDiff % 60);
-        document.getElementById("timeLeft").textContent = `${minutes} minut, ${seconds} sekund`;
-    } else {
-        document.getElementById("timeLeft").textContent = "Resp trwa!";
-    }
+    document.getElementById("nextRespTime").textContent =
+        nextResp.toLocaleTimeString("pl-PL", { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 }
 
-function updateRespList() {
-    const list = document.getElementById("respList");
-    list.innerHTML = "";
-    
-    const now = new Date();
-    let counter = 0;
-
-    for (let i = 0; i < respTimes.length && counter < 12; i++) {
-        const [h, m, s] = respTimes[i].split(":").map(Number);
-        const respTime = new Date();
-        respTime.setHours(h, m, s, 0);
-
-        if (respTime > now) {
-            const li = document.createElement("li");
-            li.textContent = respTimes[i];
-            list.appendChild(li);
-            counter++;
-        }
-    }
-}
-
-document.getElementById("next12").addEventListener("click", updateRespList);
-
-setInterval(updateCountdown, 1000);
-updateCountdown();
-updateRespList();
+// Aktualizacja co sekundę
+setInterval(updateTimer, 1000);
+updateTimer();

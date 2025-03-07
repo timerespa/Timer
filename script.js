@@ -1,20 +1,12 @@
 document.addEventListener("DOMContentLoaded", function () {
     const password = "1711";
-    let userPassword = localStorage.getItem("userPassword");
+    let userPassword = prompt("Podaj hasło, aby uzyskać dostęp:");
 
-    // Jeśli hasło nie było wcześniej wpisane, zapytaj użytkownika
     if (userPassword !== password) {
-        userPassword = prompt("Podaj hasło, aby uzyskać dostęp:");
-
-        if (userPassword === password) {
-            localStorage.setItem("userPassword", userPassword); // Zapamiętaj hasło w sesji
-        } else {
-            document.body.innerHTML = "<h1 style='text-align:center; color:red;'>Niepoprawne hasło. Dostęp zabroniony.</h1>";
-            return;
-        }
+        document.body.innerHTML = "<h1 style='text-align:center; color:red;'>Niepoprawne hasło. Dostęp zabroniony.</h1>";
+        return;
     }
 
-    // Jeśli hasło poprawne, uruchom resztę kodu
     initializePage();
 });
 

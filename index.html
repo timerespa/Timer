@@ -5,16 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kiedy Spadną Metiny</title>
     <link rel="stylesheet" href="style.css">
+    <script defer src="script.js"></script>
 </head>
 <body>
     <div class="container">
         <h1>Kiedy Spadną Metiny</h1>
-        <h2>Najbliższy resp za:</h2>
-        <div id="countdown" class="timer">--:--:--</div>
-        <h2>Resp nastąpi o:</h2>
-        <div id="nextRespTime" class="time">--:--:--</div>
+        <p class="resp-time">Najbliższy resp: <span id="nextResp">Ładowanie...</span></p>
+        <div class="timer" id="timer">Ładowanie...</div>
+        <button id="toggleList">Kolejne 12 respów</button>
+        <ul id="respList" class="hidden"></ul>
+        <footer>Autor: LuxuryPL</footer>
     </div>
-    <footer>LuxuryPL</footer>
-    <script src="script.js"></script>
 </body>
 </html>

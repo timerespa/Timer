@@ -1,43 +1,54 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // Blokada dostępu do strony do momentu wpisania hasła
     const password = "1711";
-    let userPassword = prompt("Podaj hasło, aby uzyskać dostęp:");
+    let userPassword = localStorage.getItem("userPassword");
 
+    // Jeśli hasło nie było wcześniej wpisane, zapytaj użytkownika
     if (userPassword !== password) {
-        document.body.innerHTML = "<h1>Niepoprawne hasło. Dostęp zabroniony.</h1>";
-        return;
+        userPassword = prompt("Podaj hasło, aby uzyskać dostęp:");
+
+        if (userPassword === password) {
+            localStorage.setItem("userPassword", userPassword); // Zapamiętaj hasło w sesji
+        } else {
+            document.body.innerHTML = "<h1 style='text-align:center; color:red;'>Niepoprawne hasło. Dostęp zabroniony.</h1>";
+            return;
+        }
     }
 
-    // Po poprawnym wpisaniu hasła ładuje się cała strona
+    // Jeśli hasło poprawne, uruchom resztę kodu
+    initializePage();
+});
+
+function initializePage() {
     const timerElement = document.getElementById("timer");
     const nextRespElement = document.getElementById("nextResp");
     const respList = document.getElementById("respList");
     const toggleListButton = document.getElementById("toggleList");
 
-    // Ustawienie pierwszego czasu respa
-    const initialHour = 12;
-    const initialMinute = 50;
-    const initialSecond = 5;
+    if (!timerElement || !nextRespElement || !respList || !toggleListButton) {
+        console.error("Nie znaleziono wymaganych elementów strony!");
+        return;
+    }
 
+    // Ustawienie pierwszego czasu respa
+    const initialHour = 2;
+    const initialMinute = 0;
+    const initialSecond = 55;
     const interval = 3750 * 1000; // 1h 2m 30s w milisekundach
 
     function getLastRespTime() {
         let now = new Date();
         let baseTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), initialHour, initialMinute, initialSecond);
         
-        // Jeśli jest przed pierwszym respem danego dnia, szukamy ostatni resp z poprzedniego dnia
         if (baseTime > now) {
             baseTime.setDate(baseTime.getDate() - 1);
         }
 
         let lastResp = new Date(baseTime.getTime());
-
-        // Liczymy kolejne respy do momentu, aż znajdziemy ostatni poprawny przed teraz
         while (lastResp <= now) {
             lastResp = new Date(lastResp.getTime() + interval);
         }
 
-        return new Date(lastResp.getTime() - interval); // Poprzedni faktyczny resp
+        return new Date(lastResp.getTime() - interval);
     }
 
     function getNextRespTime() {
@@ -82,4 +93,4 @@ document.addEventListener("DOMContentLoaded", function () {
 
     updateRespList();
     setInterval(updateTimer, 1000);
-});
+}

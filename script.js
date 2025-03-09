@@ -28,21 +28,22 @@ function initializePage() {
     const interval = 1 * 60 * 60 * 1000 + 2 * 60 * 1000 + 30 * 1000; // 1h 2m 30s w milisekundach
 
     function getLastRespTime() {
-        let now = Date.now(); // Aktualny czas w milisekundach
+        const now = Date.now(); // Aktualny czas w milisekundach
         let baseTime = new Date();
         baseTime.setHours(initialHour, initialMinute, initialSecond, 0);
 
-        // Jeśli baza czasu jest w przyszłości, cofnij o jeden dzień
+        // Jeśli czas bazowy jest w przyszłości, cofnij o jeden dzień
         if (baseTime.getTime() > now) {
             baseTime.setDate(baseTime.getDate() - 1);
         }
 
-        // Znajdź ostatni czas respa w odniesieniu do bieżącego czasu
-        while (baseTime.getTime() + interval <= now) {
-            baseTime = new Date(baseTime.getTime() + interval);
+        // Znajdź ostatni resp w stosunku do bieżącego czasu
+        let lastResp = baseTime.getTime();
+        while (lastResp + interval <= now) {
+            lastResp += interval;
         }
 
-        return baseTime;
+        return new Date(lastResp);
     }
 
     function getNextRespTime() {
@@ -50,42 +51,43 @@ function initializePage() {
     }
 
     function updateTimer() {
-        let nextResp = getNextRespTime();
-        let now = Date.now();
-        let timeDiff = nextResp.getTime() - now;
+        const nextResp = getNextRespTime().getTime();
+        const now = Date.now();
+        const timeDiff = nextResp - now;
 
         if (timeDiff <= 0) {
             updateRespList();
             return;
         }
 
-        let hours = Math.floor(timeDiff / (1000 * 60 * 60));
-        let minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-        let seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+        const hours = Math.floor(timeDiff / (1000 * 60 * 60));
+        const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
 
         timerElement.textContent = `${hours}h ${minutes}m ${seconds}s`;
 
-        // Synchronizacja co do sekundy z realnym czasem systemowym
+        // Użycie precyzyjnego setTimeout dla pełnej synchronizacji
         setTimeout(updateTimer, 1000 - (Date.now() % 1000));
     }
 
     function updateRespList() {
         respList.innerHTML = "";
-        let nextResp = getNextRespTime();
+        let nextResp = getNextRespTime().getTime();
 
         for (let i = 0; i < 12; i++) {
-            let respTime = new Date(nextResp.getTime() + i * interval);
+            let respTime = new Date(nextResp + i * interval);
             let formattedTime = respTime.toLocaleTimeString("pl-PL", {
                 hour: "2-digit",
                 minute: "2-digit",
                 second: "2-digit"
             });
+
             let listItem = document.createElement("li");
             listItem.textContent = formattedTime;
             respList.appendChild(listItem);
         }
 
-        nextRespElement.textContent = nextResp.toLocaleTimeString("pl-PL", {
+        nextRespElement.textContent = new Date(nextResp).toLocaleTimeString("pl-PL", {
             hour: "2-digit",
             minute: "2-digit",
             second: "2-digit"
@@ -96,7 +98,7 @@ function initializePage() {
         respList.classList.toggle("hidden");
     });
 
-    // Pełna synchronizacja z systemem
+    // Uruchomienie timera
     updateRespList();
     updateTimer();
 }

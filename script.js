@@ -21,26 +21,22 @@ function initializePage() {
         return;
     }
 
-    // Ustawienie pierwszego czasu respa
+    // Ustawienie pierwszego czasu respa na 13:44:55
     const initialHour = 13;
     const initialMinute = 44;
     const initialSecond = 55;
-    const interval = 3750 * 1000; // 1h 2m 30s w milisekundach
+    const interval = (1 * 60 * 60 + 2 * 60 + 30) * 1000; // 1h 2m 30s w milisekundach
 
     function getLastRespTime() {
         let now = new Date();
         let baseTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), initialHour, initialMinute, initialSecond);
-        
-        if (baseTime > now) {
-            baseTime.setDate(baseTime.getDate() - 1);
+
+        // Cofnij bazowy czas do ostatniego poprawnego respa
+        while (baseTime > now) {
+            baseTime = new Date(baseTime.getTime() - interval);
         }
 
-        let lastResp = new Date(baseTime.getTime());
-        while (lastResp <= now) {
-            lastResp = new Date(lastResp.getTime() + interval);
-        }
-
-        return new Date(lastResp.getTime() - interval);
+        return baseTime;
     }
 
     function getNextRespTime() {
@@ -53,15 +49,16 @@ function initializePage() {
         let now = new Date();
         let timeDiff = nextResp - now;
 
+        if (timeDiff <= 0) {
+            updateRespList();
+            return;
+        }
+
         let hours = Math.floor(timeDiff / (1000 * 60 * 60));
         let minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
         let seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
 
         timerElement.textContent = `${hours}h ${minutes}m ${seconds}s`;
-
-        if (timeDiff <= 1000) {
-            updateRespList();
-        } ku
     }
 
     function updateRespList() {
@@ -83,6 +80,7 @@ function initializePage() {
         respList.classList.toggle("hidden");
     });
 
+    // Aktualizacja listy respów i odliczania
     updateRespList();
     setInterval(updateTimer, 1000);
 }

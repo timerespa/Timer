@@ -65,6 +65,7 @@ function initializePage() {
         let minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
         let seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
 
+        // Poprawiona aktualizacja timeru (bez opóźnień)
         timerElement.textContent = `${hours}h ${minutes}m ${seconds}s`;
     }
 

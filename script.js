@@ -23,9 +23,9 @@ function initializePage() {
 
     // Czas początkowy pierwszego respa
     const initialRespTime = new Date();
-    initialRespTime.setHours(13);
-    initialRespTime.setMinutes(44);
-    initialRespTime.setSeconds(55);
+    initialRespTime.setHours(08);
+    initialRespTime.setMinutes(32);
+    initialRespTime.setSeconds(25);
     initialRespTime.setMilliseconds(0);
 
     const interval = 3750 * 1000; // 1h 2m 30s w milisekundach

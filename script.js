@@ -22,9 +22,9 @@ function initializePage() {
     }
 
     // Ustawienie pierwszego czasu respa
-    const initialHour = 12;
-    const initialMinute = 42;
-    const initialSecond = 25;
+    const initialHour = 13;
+    const initialMinute = 44;
+    const initialSecond = 55;
     const interval = 3750 * 1000; // 1h 2m 30s w milisekundach
 
     function getLastRespTime() {
@@ -61,7 +61,7 @@ function initializePage() {
 
         if (timeDiff <= 1000) {
             updateRespList();
-        }
+        } ku
     }
 
     function updateRespList() {
